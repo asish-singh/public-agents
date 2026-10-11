@@ -1,59 +1,51 @@
 ---
 name: aaif-taxonomy-contributions
-description: Guides agents through contributing to the AAIF Common Taxonomy and Landscape workstream (aaif/ws-taxonomy-landscape). Use when proposing a definition for an accepted taxonomy term, proposing a new glossary term, adding or fixing an entry on the ecosystem landscape, or helping a contributor pick the right submission path for any of those.
+description: Guides agents through contributing to the AAIF Common Taxonomy and Landscape workstream (aaif/ws-taxonomy-landscape). Use when a contributor wants to propose a new taxonomy term, define an accepted term, change an existing definition, or add something to the ecosystem landscape, and needs to know which path the workstream will actually accept.
 metadata:
   author: Asish Singh
   organization: AAIF
-  source: https://github.com/aaif/ws-taxonomy-landscape/blob/main/docs/data-schemas.md
-  version: "1.0"
+  source: https://github.com/aaif/ws-taxonomy-landscape/blob/main/CONTRIBUTING.md
+  version: "2.0"
 ---
 
 # AAIF Taxonomy and Landscape Contributions
 
-Use this skill when helping a contributor propose anything to the AAIF Common Taxonomy and Landscape workstream at `aaif/ws-taxonomy-landscape`. The workstream maintains the shared vocabulary (taxonomy) and ecosystem map (landscape) for all AAIF working groups. Routing a proposal down the wrong path is the most common failure, so start with the routing table.
+Use this skill when helping someone contribute to the AAIF Common Taxonomy and Landscape workstream at `aaif/ws-taxonomy-landscape`. The workstream maintains the shared vocabulary (taxonomy) and the ecosystem map (landscape) for all AAIF working groups. Most rejected contributions fail on routing, not content, so decide the route before drafting anything.
 
-## Route the contribution first
+## Read the live rules first
+
+Fetch `CONTRIBUTING.md` from the repository before advising. It is the governing document and has changed more than once. Where it disagrees with `docs/data-schemas.md` (for example on whether definition pull requests are welcome), `CONTRIBUTING.md` wins, because the schema doc's guidance on deferred fields predates the current process. Then check whether the taxonomy data still lives in `taxonomy/taxonomy-data.js` or has moved to `taxonomy/taxonomy.json` (a migration to JSON with schema validation was proposed in pull request #79), and edit whichever file is current.
+
+## Route the contribution
 
 | The contributor wants to | Correct path |
 | --- | --- |
-| Supply a definition for a term that is already in `taxonomy/taxonomy-data.js` with the pending placeholder | Open an ISSUE titled `Define: <Term>`, not an ad hoc PR. The repo defers `definition`, `category`, and `broaderTerm` on purpose and its docs ask that proposals for these fields go to an issue or the weekly sync. |
-| Propose a brand new glossary term | PR editing `taxonomy/taxonomy-data.js` (for git users), or an issue with the raw details (for everyone else). New entries still leave the deferred fields blank. |
-| Add, correct, or update a tool, protocol, or standard on the landscape | PR editing `landscape/landscape.yml`. |
-| Question the process, ownership, or placement of something | Issue, or the weekly workstream sync (Mondays, 08:30 PST). |
+| Propose a new term | Ask the delegate from the owning working group to add it to the taxonomy spreadsheet linked in `CONTRIBUTING.md` and flag it in the workstream Discord channel. The weekly workstream meeting votes KEEP, CULL or DEBATE. Non delegates can also attend that meeting to advocate for the term. |
+| Define a term that received a KEEP vote | A pull request, normally from a delegate of the owning working group, defining one term. Confirm the KEEP vote before drafting, since pull requests for terms without one are closed. |
+| Define a term with no KEEP vote yet | Not a pull request. Route it through the spreadsheet and meeting first. An issue is acceptable for discussion but does not substitute for the vote. |
+| Change or correct an existing definition | A pull request against the existing entry, with the reason stated. Pull requests titled `Update taxonomy term: <Term>` are the established shape. |
+| Add or fix a landscape entry | Nothing yet. The landscape process has not been approved and landscape pull requests are closed. Note the proposal and hold it until `CONTRIBUTING.md` reopens that lane. |
+| Question the process, ownership or placement | An issue, or the weekly meeting. |
 
-## Before drafting anything
+## Before drafting a definition
 
-1. Fetch the current `docs/data-schemas.md` and the header comment of `taxonomy/taxonomy-data.js`. Rules there override this skill if they have changed.
-2. Check the term's current entry. Is it accepted with a pending definition, absent entirely, or already defined? That decides the route above.
-3. Search open PRs and issues for the same term or tool. In flight proposals exist more often than you expect. If one exists, reference it openly in your proposal and offer reconciliation instead of racing it.
-4. Check whether the proposed term duplicates an existing concept. A genuine synonym belongs in the existing term's `aliases` array, but never fold a look alike term into an alias without written sign off from the owning working group's Domain Editor. Deliberately distinct concepts stay separate entries.
+1. Confirm the term exists in the taxonomy data and check its current entry.
+2. Search open pull requests and issues for the same term. Several delegates draft in parallel, so overlaps are common. If one exists, reference it and offer to reconcile rather than racing it.
+3. Check whether the term duplicates an existing concept. A genuine synonym belongs in that entry's `aliases`. Deliberately distinct concepts stay separate, and folding one into another needs the owning working group's agreement.
 
-## The quality bar for definitions
+## The quality bar
 
-The bar the workstream has converged on was put memorably by the author of its issue #43, a definition earns its place by naming what would make it false, not what the thing is for. Build each definition around one discriminator a reader can test against a borderline case. Definitions must be vendor neutral, objective, and free of product names or marketing language.
+The definition is one sentence. Supporting detail, examples and boundaries go in `scopeNote`. A good definition names something a reader can test against a borderline case, so it says what would make the term not apply, not merely what the thing is for. Keep it vendor neutral and free of product names. When a term has a contrasting counterpart (Tool and Skill, for example), its definition must say how it differs, and the pair should be linked through `contrastsWith` or `relatedTerms`. Point those fields only at terms already in the taxonomy, and propose any missing term separately.
 
-When a term has a contrasting counterpart (Tool and Skill, for example), each term's definition must itself state how it differs from the counterpart, and the pair must be linked through `relatedTerms` or `contrastsWith`. A shared scopeNote that merely records both views writes the confusion down instead of resolving it.
+## Pull request shape
 
-Point `relatedTerms` and `contrastsWith` only at terms already in the taxonomy. By the precedent set in issues #43 and #47, a definition proposal should not smuggle in new terms. If a needed term is missing, say so and propose it separately.
+Recent merged definitions (for example `Define universal term Subagent`, pull request #68) follow this shape.
 
-## The Define issue shape
+- Title `Define universal term <Term>` for a universal term, or `Define taxonomy term: <Term>` for one owned by a working group.
+- One term per pull request unless there is a reason to group them. Multi term pull requests may need more approvals.
+- The entry keeps the existing field order. `category` stays `''` and `broaderTerm` stays `null` while those fields remain deferred. `workgroups` never contains `Universal`, and a term owned by no single group carries `[]`.
+- The description names the KEEP vote (meeting date), the owning working group, and any overlapping pull request or issue.
 
-Model definition proposals on the repo's accepted precedent (see issues numbered in the forties for live examples). The shape is
+## After submission
 
-1. One short paragraph noting the term is accepted with a pending definition and that the schema doc asks for an issue rather than a PR, so this is an issue with PR ready text.
-2. `## Proposed definition` as a single quoted sentence.
-3. `## Why this wording` explaining the discriminator and walking through two or three near misses the definition correctly excludes.
-4. `## Proposed scopeNote` capturing boundaries and cross group perspectives.
-5. `## Proposed field values` as a code block showing the full entry, with `category`, `broaderTerm`, and any untouched fields explicitly marked unchanged.
-6. A disclosure paragraph if the contributor has any stake in how the term lands, plus a note on any overlapping open PR or issue found in step 3 above.
-
-## Schema quick reference
-
-- Terms use sentence case and must be unique across the file.
-- Deferred fields on every entry, until the workstream lifts the deferral. `definition` uses exactly the pending placeholder string from the schema doc, `category` is `''`, `broaderTerm` is `null`.
-- `workgroups` never contains `Universal`. A term owned by no single group carries `[]`.
-- Landscape items require `name`, `homepage_url` (https only), `description` (objective, and the schema doc bans the superlatives "first," "best," "industry-leading," and "revolutionary"), and `project` (one of `graduated`, `incubating`, `member`, `external`). `repo_url` is optional. Live entries also carry fields the schema doc does not list, such as `logo`, so mirror the fields of neighboring entries in `landscape.yml` rather than trusting the doc alone.
-
-## What happens after submission
-
-Merging needs approval from two or three Domain Editors from different working groups, then a workstream Chair merges. Contested or cross cutting proposals go to the Monday sync. If editors deadlock for 14 days, the Chairs arbitrate. Set the contributor's expectations accordingly and suggest the sync when an issue gets no traction.
+A single term pull request needs two approvals from delegates representing different working groups, and any delegate can veto. Once approved, a maintainer merges with Rebase and merge and the spreadsheet row is marked FINALIZED. If a pull request stalls, raise it at the weekly meeting rather than pinging reviewers repeatedly.
